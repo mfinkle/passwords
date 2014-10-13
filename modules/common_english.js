@@ -1,4 +1,4 @@
-var english = [
+var english_list = [
   "you",
   "i",
   "to",
