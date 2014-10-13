@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd" >
+%brandDTD;
+<!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd" >
+%globalDTD;
+]>
+
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Password Audit</title>
+  <meta name="viewport" content="width=device-width; user-scalable=0" />
+  <link rel="icon" type="image/png" sizes="64x64" href="chrome://branding/content/favicon64.png" />
+  <link rel="stylesheet" href="chrome://browser/skin/aboutBase.css" type="text/css"/>
+  <link rel="stylesheet" href="chrome://passwords/content/aboutPasswords.css" type="text/css"/>
+  <script type="application/javascript;version=1.8" src="chrome://passwords/content/aboutAudit.js"></script>
+</head>
+
+<body dir="&locale.dir;">
+  <div id="weak-header" class="header">
+    <div>Weak Passwords (<span class="count"></span>)</div>
+  </div>
+  <div id="weak-list" class="list">
+  </div>
+
+  <div id="dup-header" class="header">
+    <div>Duplicate Passwords (<span class="count"></span>)</div>
+  </div>
+  <div id="dup-list" class="list">
+  </div>
+
+  <div id="old-header" class="header">
+    <div>Old Passwords (<span class="count"></span>)</div>
+  </div>
+  <div id="old-list" class="list">
+  </div>
+
+  <div id="login-details" class="list">
+    <div class="login-item list-item">
+      <img class="icon"/>
+      <div class="inner">
+        <div class="details">
+          <div class="hostname"></div>
+          <div class="realm"></div>
+        </div>
+        <div class="username"></div>
+        <div class="password-score"></div>
+        <div class="password-cracktime"></div>
+        <div class="summary"></div>
+      </div>
+      <div class="buttons">
+        <button id="copyusername-btn">Copy Username</button>
+        <button id="copypassword-btn">Copy Password</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
