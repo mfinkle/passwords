@@ -30,7 +30,9 @@ var NativeUI = {
     generateSets: null,
     generateDomain: null,
     peek: null,
-    audit: null
+    audit: null,
+    list: null,
+    fake: null
   },
 
   createUI: function createUI(window) {
@@ -57,6 +59,16 @@ var NativeUI = {
     this.menu.audit = window.NativeWindow.menu.add({
       name: "Audit",
       callback: function() { self.audit(window); },
+      parent: this.menu.root
+    });
+    this.menu.list = window.NativeWindow.menu.add({
+      name: "List",
+      callback: function() { self.list(window); },
+      parent: this.menu.root
+    });
+    this.menu.fake = window.NativeWindow.menu.add({
+      name: "Add Fake Logins (Tests)",
+      callback: function() { self.addFakeLogins(window); },
       parent: this.menu.root
     });
 
@@ -95,7 +107,11 @@ var NativeUI = {
     this._removeMenu(window, this.menu.generateDomain);
     this._removeMenu(window, this.menu.peek);
     this._removeMenu(window, this.menu.audit);
+    this._removeMenu(window, this.menu.list);
+    this._removeMenu(window, this.menu.fake);
     this._removeMenu(window, this.menu.root);
+
+    window.SelectionHandler.removeAction("peek_password_action");
   },
 
   characterSets: function characterSets(window) {
@@ -217,7 +233,51 @@ var NativeUI = {
   },
 
   audit: function audit(window) {
+    window.BrowserApp.addTab("chrome://passwords/content/aboutAudit.xhtml");
+  },
 
+  list: function list(window) {
+    window.BrowserApp.addTab("chrome://passwords/content/aboutPasswords.xhtml");
+  },
+
+  addFakeLogins: function aFakeLogins(window) {
+    let LoginInfo = new Components.Constructor("@mozilla.org/login-manager/loginInfo;1", Ci.nsILoginInfo, "init");
+    function createLogin(hostURL, formURL, realm, username, password, modifications) {
+      let loginInfo = new LoginInfo(hostURL, formURL, realm, username, password, "u-field", "p-field");
+
+      loginInfo.QueryInterface(Ci.nsILoginMetaInfo);
+      if (modifications) {
+        for (let [name, value] of Iterator(modifications)) {
+          loginInfo[name] = value;
+        }
+      }
+      return loginInfo;
+    }
+
+    // Add some initial logins
+    let urls = [
+        "http://mozilla.org/",
+        "https://developer.mozilla.org/",
+        "https://bugzilla.mozilla.org/",
+        "https://mobile.twitter.com/",
+        "https://m.facebook.com/",
+        "https://accounts.google.com/",
+        "https://hire.jobvite.com/",
+    ];
+
+    let oldTimeMs = Date.now() - (1000 * 60 * 60 * 24 * 100); // 100 days ago
+    let logins = [
+        createLogin(urls[0], null, "Mozilla", "kesyer.sozey@usual.org", "he-killed-his-family-so-they-couldn't"),
+        createLogin(urls[1], urls[1], null, "kesyer.sozey@usual.org", "he-killed-his-family-so-they-couldn't"),
+        createLogin(urls[2], urls[2], null, "kesyer.sozey@mozilla.com", "Tr0ub4dour&3", { timePasswordChanged: oldTimeMs }),
+        createLogin(urls[3], urls[3], null, "kesyer.sozey@usual.org", "been-on-twitter-since-2005"),
+        createLogin(urls[4], urls[4], null, "kesyer.sozey@usual.org", "been-on-facebook-since-2004"),
+        createLogin(urls[5], urls[5], null, "kesyer.sozey@usual.org", "password1"),
+        createLogin(urls[5], urls[5], null, "kesyer.sozey@gmail.com", "aaaaa+123456", { timePasswordChanged: oldTimeMs }),
+        createLogin(urls[5], urls[5], null, "ksozey@me.com", "correcthorsebatterystaple"),
+        createLogin(urls[6], urls[6], null, "kesyer.sozey@mozilla.com", "neverforget3/13/1997"),
+    ];
+    logins.forEach((login) => Services.logins.addLogin(login));
   }
 };
 
